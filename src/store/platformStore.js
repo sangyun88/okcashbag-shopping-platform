@@ -3,22 +3,26 @@ import { GROUP_BUYS, MY_WISHLIST, MY_JOINS } from '../data/mockData';
 
 export const usePlatformStore = create((set, get) => ({
   // Navigation
-  screen: 'home',   // home | detail | seller | calendar | sell | my
+  screen: 'shopping',
   prevScreen: null,
-  selectedId: null, // groupBuy id
+  selectedId: null,
   selectedSellerId: null,
 
   setScreen: (screen, id = null, sellerId = null) =>
     set(s => ({ prevScreen: s.screen, screen, selectedId: id, selectedSellerId: sellerId })),
   goBack: () =>
-    set(s => ({ screen: s.prevScreen || 'home', prevScreen: null })),
+    set(s => ({ screen: s.prevScreen || 'shopping', prevScreen: null })),
+
+  // Shopping tab
+  activeTab: 'recommend',
+  setActiveTab: (tab) => set({ activeTab: tab }),
 
   // Data
   groupBuys: GROUP_BUYS,
   wishlist: MY_WISHLIST,
   myJoins: MY_JOINS,
 
-  // Category filter
+  // Category filter (공동구매 탭용)
   activeCategory: 'all',
   setCategory: (cat) => set({ activeCategory: cat }),
 
@@ -34,7 +38,6 @@ export const usePlatformStore = create((set, get) => ({
         : [...s.wishlist, id],
     })),
 
-  // Join a group buy (mock)
   joinGroupBuy: (id) =>
     set(s => ({
       groupBuys: s.groupBuys.map(gb =>
@@ -43,12 +46,10 @@ export const usePlatformStore = create((set, get) => ({
       myJoins: [...s.myJoins, { groupBuyId: id, qty: 1, orderedAt: '방금', status: '결제완료' }],
     })),
 
-  // Seller dashboard: create (mock)
   createGroupBuy: (data) =>
     set(s => ({
       groupBuys: [{ ...data, id: Date.now(), current: 0, status: 'active' }, ...s.groupBuys],
     })),
 
-  // Points (mock)
   myPoints: 3200,
 }));
