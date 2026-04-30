@@ -18,16 +18,19 @@ export default function CountdownBadge({ deadline, status, compact = false }) {
     return () => clearInterval(id);
   }, [deadline]);
 
+  // Airbnb Superhost chip style: white bg, pill, small bold text
+  const chipStyle = {
+    background: T.white, borderRadius: 9999,
+    padding: compact ? '2px 7px' : '3px 9px',
+    display: 'inline-flex', alignItems: 'center', gap: 4,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.14)',
+  };
+
   if (status === 'upcoming') {
-    const d = getRemaining(deadline);
     return (
-      <div style={{
-        background: T.blue + '15', borderRadius: 9999, padding: compact ? '2px 8px' : '4px 10px',
-        display: 'inline-flex', alignItems: 'center', gap: 4,
-      }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: T.blue }} />
-        <span style={{ fontSize: compact ? 11 : 12, fontWeight: 700, color: T.blue }}>
-          {d ? `D-${d.days} 오픈 예정` : '오픈 예정'}
+      <div style={chipStyle}>
+        <span style={{ fontSize: compact ? 9 : 10, fontWeight: 700, color: T.blue, letterSpacing: 0.1 }}>
+          오픈 예정
         </span>
       </div>
     );
@@ -35,29 +38,27 @@ export default function CountdownBadge({ deadline, status, compact = false }) {
 
   if (!rem) {
     return (
-      <div style={{ background: T.gray100, borderRadius: 9999, padding: '2px 8px', display: 'inline-flex', alignItems: 'center' }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: T.gray400 }}>마감</span>
+      <div style={{ ...chipStyle, background: T.gray100 }}>
+        <span style={{ fontSize: 9, fontWeight: 700, color: T.gray400 }}>마감</span>
       </div>
     );
   }
 
   const urgent = rem.days === 0;
   const closing = status === 'closing_soon' || rem.days <= 1;
-  const color = urgent ? T.statusRed : closing ? T.statusOrange : T.gray600;
-  const bg    = urgent ? T.statusRed + '12' : closing ? T.statusOrange + '12' : T.gray50;
+  const color = urgent ? T.statusRed : closing ? T.statusOrange : T.gray800;
 
   const label = rem.days > 0
     ? `D-${rem.days}`
-    : `${rem.hours}시간 ${rem.mins}분`;
+    : `${rem.hours}h ${rem.mins}m`;
 
   return (
-    <div style={{
-      background: bg, borderRadius: 9999, padding: compact ? '2px 8px' : '4px 10px',
-      display: 'inline-flex', alignItems: 'center', gap: 4,
-    }}>
-      {urgent && <div className="animate-pulse-slow" style={{ width: 6, height: 6, borderRadius: '50%', background: color }} />}
-      <span style={{ fontSize: compact ? 11 : 12, fontWeight: 700, color }}>
-        {closing && rem.days > 0 ? `마감임박 D-${rem.days}` : label}
+    <div style={chipStyle}>
+      {urgent && (
+        <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.statusRed }} />
+      )}
+      <span style={{ fontSize: compact ? 9 : 10, fontWeight: 700, color, letterSpacing: 0.1 }}>
+        {label}
       </span>
     </div>
   );
